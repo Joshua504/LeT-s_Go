@@ -10,6 +10,11 @@ import (
 // * Define a home handler function which writes a byte slice containing
 // * "Hello from Snippetbox" as the response body
 func home(w http.ResponseWriter, r *http.Request) {
+	//? Use the Header().Add() method to add a 'Server: Go' header to the
+	//? response header map. The first parameter is the header name, and
+	//? the second parameter is the header value.
+	w.Header().Add("Server", "GO")
+
 	w.Write([]byte("Hello from Snippetbox"))
 }
 
@@ -26,8 +31,10 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 
 	//* Use the fmt.Sprintf() function to interpolate the id value with a
 	//* message, then write it as the HTTP response.
-	msg := fmt.Sprintf("Display a specific snippet with ID %d...", id)
-	w.Write([]byte(msg))
+	// msg := fmt.Sprintf("Display a specific snippet with ID %d...", id)
+	// w.Write([]byte(msg))
+
+	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +43,7 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 
 func snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	//* Use the w.WriteHeader() method to send a 201 status code.
-	w.WriteHeader(201)
+	w.WriteHeader(http.StatusCreated)
 
 	//* Then w.Write() method to write the response body as normal.
 	w.Write([]byte("Saving a new snippet..."))
@@ -50,7 +57,7 @@ func main() {
 
 	//* Register the two new handler functions and corresponding route patterns with
 	//* the servemux, in exactly the same way that we did before.
-	
+
 	//* Prefix the route patterns with the required HTTP method (for now, we will
 	//* restrict all three routes to acting on GET requests).
 	mux.HandleFunc("GET /snippet/view/{id}", snippetView) //? Add the {id} wildcard segment
